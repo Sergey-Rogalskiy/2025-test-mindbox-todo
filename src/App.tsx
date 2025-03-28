@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useRef } from "react";
 
-function App() {
+import { useAtomState } from "@zedux/react";
+import { todoItemsState } from "./zedux/store";
+
+import { AddItem, TodoList, Options } from "./components";
+import {
+  Background,
+  Decor,
+  Header,
+  InnerContainer,
+  MainContainer,
+} from "./styles";
+
+const App: React.FC = () => {
+  const [, setTodoList] = useAtomState(todoItemsState);
+  const todos = localStorage.getItem("todos");
+  const _initialTodoList = useRef(null);
+  _initialTodoList.current = JSON.parse(todos || "[]");
+  useEffect(() => {
+    if (todos) {
+      setTodoList(_initialTodoList.current || []);
+    }
+  }, [setTodoList, todos]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Background>
+      <Header>todos</Header>
+      <MainContainer>
+        <AddItem />
+        <InnerContainer>
+          <TodoList />
+          <Options />
+          <Decor $bottom="-0.3rem" $left="0.3rem" width="98%" />
+          <Decor $bottom="-0.55rem" $left="0.5rem" width="96%" />
+        </InnerContainer>
+      </MainContainer>
+    </Background>
   );
-}
+};
 
 export default App;
